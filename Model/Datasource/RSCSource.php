@@ -54,7 +54,7 @@ class RSCSource extends DataSource {
 	 * Create our HttpSocket and handle any config tweaks.
 	 */
 	public function __construct($config) {
-		$config = $this->setConfig($config);
+		$config = $this->assignConfig($config);
 		parent::__construct($config);
 	}
 
@@ -62,7 +62,7 @@ class RSCSource extends DataSource {
 	 * Sets configuration
 	 *
 	 */
-	public function setConfig($config) {
+	public function assignConfig($config) {
 		if (!Configure::check('RSC')) {
 			try {
 				Configure::load('rsc');

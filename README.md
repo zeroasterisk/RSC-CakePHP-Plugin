@@ -26,17 +26,36 @@ git submodule update --init --recursive
 Manual Installation
 
 * Download this plugin into `app/Plugin/RSC`
-* Download (php-opencloud)[https://github.com/rackspace/php-opencloud] into `app/Plugin/RSC/Vendor/php-opencloud`
+* Download [php-opencloud](https://github.com/rackspace/php-opencloud) into `app/Plugin/RSC/Vendor/php-opencloud`
 
 
 Configure
 ----------------------
 
+**Load Plugin**
+
 Ensure the plugin is loaded in `app/Config/bootstrap.php` by calling `CakePlugin::load('RSC');`
 
 ```
-echo "CakePlugin::load('RSC');" >> `app/Config/bootstrap.php`
+echo "CakePlugin::load('RSC');" >> 'app/Config/bootstrap.php'
 ```
+
+**Make Database Config**
+
+Add an entry to `app/Config/database.php` for `rcs` calling the datasource = 'RSC.RSCSource'
+
+```
+	public $rsc = array(
+		'datasource' => 'RSC.RSCSource',
+		/* the rest of the config is in app/Config/rsc.php */
+	);
+```
+
+```
+echo "public $rsc = array( 'datasource' => 'RSC.RSCSource' );" >> 'app/Config/database.php'
+```
+
+**Setup Config File**
 
 Copy the example config file over, and edit
 

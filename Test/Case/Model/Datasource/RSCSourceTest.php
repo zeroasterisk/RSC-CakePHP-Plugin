@@ -58,7 +58,7 @@ class RSCTestCase extends CakeTestCase {
 	}
 
 	/**
-	 * test setConfig
+	 * test assignConfig
 	 *
 	 * @return void
 	 * @access public
@@ -66,7 +66,7 @@ class RSCTestCase extends CakeTestCase {
 	public function testSetConfig() {
 		$expect = $this->RSC->config;
 		$input = array('a' => 'A', 'b' => array(1,2,3));
-		$this->RSC->setConfig($input);
+		$this->RSC->assignConfig($input);
 		if (!Configure::check('RSC')) {
 			try {
 				Configure::load('rsc');
@@ -86,7 +86,7 @@ class RSCTestCase extends CakeTestCase {
 			'a' => 'Configged',
 			'c' => $input,
 		));
-		$this->RSC->setConfig($input);
+		$this->RSC->assignConfig($input);
 		$configFromConfigure = Configure::read('RSC');
 		$expect = array_merge($configFromConfigure, $expect);
 		$expect = array_merge($expect, $input);

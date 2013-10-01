@@ -292,8 +292,8 @@ class RSCFile extends RSCAppModel {
 	 * @param string $filename
 	 * @return array $details
 	 */
-	public function getFileDetails($container, $filename) {
-		$o = $container->DataObject($filename);
+	public function getFileDetails($filename, $container = null) {
+		$o = $this->read(null, $filename, $container);
 		return array(
 			'name' => $o->name,
 			'size' => $o->bytes,
