@@ -118,104 +118,23 @@ class RSCSource extends DataSource {
 	public function calculate(Model $model, $func, $params = array()) {
 		return 'COUNT';
 	}
-
-	/**
-	 * Implement the R in CRUD. Calls to ``Model::find()`` arrive here.
-	 */
-	public function read(Model $model, $queryData = array(), $recursive = null) {
-		$read_function = "__{$model->alias}_read";
-		if (is_callable(array($this, $read_function))) {
-			return call_user_func(array($this, $read_function), $model, $queryData, $recursive);
-		}
-		$this->__error("RSCSource::$read_function not defined.");
-	}
 	
 	/**
-	 * Implement the C in CRUD. Calls to ``Model::save()`` without $model->id
-	 * set arrive here.
-	 */
-	public function create(Model $model, $fields = null, $values = null) {
-		$data = array_combine($fields, $values);
-		$create_function = "__{$model->alias}_create";
-		if (is_callable(array($this, $create_function))) {
-			return call_user_func(array($this, $create_function), $model, $fields, $values);
+	* Strip out the model alias out of the conditions array.
+	*/
+	protected function _stripOutModelAliasInConditions($conditions = array(), $alias = null) {
+		if (empty($conditions) || empty($alias)) {
+			return $conditions;
 		}
-		$this->__error("RSCSource::$create_function not defined.");
-	}
-	
-	
-	
-	private function __RSCFile_read(Model $model, $queryData = array(), $recursive = null) {
-		if (!isset($queryData['container'])) {
-			$this->__error('container not defined in find condition.');
-		}
-		//TODO
-	}
-	
-	private function __RSCDomain_read(Model $model, $queryData = array(), $recursive = null) {
-		if (!$this->connected) {
-			$this->connect();
-		}
-		$dns = $this->connection->DNS();
-		$filter = null;
-		if (!empty($queryData['conditions'])) {
-			$filter = $queryData['conditions'];
-		}
-		$dlist = $dns->DomainList($filter);
-		while ($domain = $dlist->Next()) {
-			$rsc_domain = array();
-			if (!empty($queryData['records'])) {
-				$rlist = $domain->RecordList();
-				while ($record = $rlist->Next()) {
-					$rsc_domain['RSCRecord'][] = array(
-						'name' => $record->Name(),
-						'id' => $record->id,
-						'type' => $record->type,
-						'data' => $record->data,
-						'ttl' => $record->ttl,
-						'created' => $record->created,
-						'updated' => $record->updated
-					);
-				}
-			}
-			$rsc_domain[$model->alias] = array(
-				'name' => $domain->Name(),
-				'id' => $domain->id,
-				'ttl' => $domain->ttl,
-				'created' => $domain->created,
-			);
-			$retval[] = $rsc_domain;
+		$retval = array();
+		foreach ($conditions as $key => $value) {
+			$new_key = str_replace($alias . '.', '', $key);
+			$retval[$new_key] = $value;
 		}
 		return $retval;
 	}
 
-	/**
-	 * Implement the U in CRUD. Calls to ``Model::save()`` with $Model->id
-	 * set arrive here. Depending on the remote source you can just call
-	 * ``$this->create()``.
-	 */
-	public function update(Model $model, $fields = null, $values = null, $conditions = null) {
-		return $this->create($model, $fields, $values);
-	}
-
-	/**
-	 * Implement the D in CRUD. Calls to ``Model::delete()`` arrive here.
-	 */
-	public function delete(Model $model, $id = null) {
-		$json = $this->Http->get('http://example.com/api/remove.json', array(
-			'id' => $id[$model->alias . '.id'],
-			'apiKey' => $this->config['apiKey'],
-		));
-		$res = json_decode($json, true);
-		if (is_null($res)) {
-			$error = json_last_error();
-			throw new CakeException($error);
-		}
-		return true;
-	}
-
-	private function __error($message) {
+	protected function _error($message) {
 		throw new RSCSourceException($message);
 	}
-
 }
