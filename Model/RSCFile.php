@@ -23,6 +23,22 @@ class RSCFile extends RSCAppModel {
 	 * placeholders stashes for existing connections
 	 */
 	public $containers = array();
+	
+	/**
+	 * If we want to create() or update() we need to specify the fields
+	 * available. We use the same array keys as we do with CakeSchema, eg.
+	 * fixtures and schema migrations.
+	 */
+	protected $_schema = array(
+		'name' => array('type' => 'string','null' => false,'key' => 'primary','length' => 255),
+		'size' => array('type' => 'int','null' => false,'length' => 11),
+		'type' => array('type' => 'string','null' => true,'length' => 255),
+		'publicurl' => array('type' => 'string','null' => true,'length' => 255),
+		'cdnurl' => array('type' => 'string','null' => true,'length' => 255),
+		'hash' => array('type' => 'string','null' => true,'length' => 255),
+		'last_modified' => array('type' => 'datetime','null' => true),
+		'content_type' => array('type' => 'string','null' => false, 'length' => 255),
+	);
 
 	/**
 	 * Setup RSC Files specific needs
@@ -189,7 +205,7 @@ class RSCFile extends RSCAppModel {
 	 * @param mixed $container string or object (or null = get lastused container)
 	 * @return object DataObject
 	 */
-	public function read($fields = null, $filename = null, $container = null) {
+	public function _read($fields = null, $filename = null, $container = null) {
 		if (empty($filename)) {
 			$filename = $this->id;
 		}

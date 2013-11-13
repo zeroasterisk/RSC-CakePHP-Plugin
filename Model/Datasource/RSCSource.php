@@ -1,4 +1,5 @@
 <?php
+class RSCSourceException extends CakeException {}
 /**
  * Rackspace Cloud Plugin for CakePHP
  *
@@ -23,28 +24,7 @@ class RSCSource extends DataSource {
 
 	);
 
-	/**
-	 * If we want to create() or update() we need to specify the fields
-	 * available. We use the same array keys as we do with CakeSchema, eg.
-	 * fixtures and schema migrations.
-	 */
-	protected $_schema = array(
-		'id' => array(
-			'type' => 'integer',
-			'null' => false,
-			'key' => 'primary',
-			'length' => 11,
-		),
-		'name' => array(
-			'type' => 'string',
-			'null' => true,
-			'length' => 255,
-		),
-		'message' => array(
-			'type' => 'text',
-			'null' => true,
-		),
-	);
+	protected $_schema = array();
 
 	// placeholders
 	public $connection = null;
@@ -143,42 +123,70 @@ class RSCSource extends DataSource {
 	 * Implement the R in CRUD. Calls to ``Model::find()`` arrive here.
 	 */
 	public function read(Model $model, $queryData = array(), $recursive = null) {
-		/**
-		 * Here we do the actual count as instructed by our calculate()
-		 * method above. We could either check the remote source or some
-		 * other way to get the record count. Here we'll simply return 1 so
-		 * ``update()`` and ``delete()`` will assume the record exists.
-		 */
-		if ($queryData['fields'] === 'COUNT') {
-			return array(array(array('count' => 1)));
+		$read_function = "__{$model->alias}_read";
+		if (is_callable(array($this, $read_function))) {
+			return call_user_func(array($this, $read_function), $model, $queryData, $recursive);
 		}
-		/**
-		 * Now we get, decode and return the remote data.
-		 */
-		$queryData['conditions']['apiKey'] = $this->config['apiKey'];
-		$json = $this->Http->get('http://example.com/api/list.json', $queryData['conditions']);
-		$res = json_decode($json, true);
-		if (is_null($res)) {
-			$error = json_last_error();
-			throw new CakeException($error);
-		}
-		return array($model->alias => $res);
+		$this->__error("RSCSource::$read_function not defined.");
 	}
-
+	
 	/**
 	 * Implement the C in CRUD. Calls to ``Model::save()`` without $model->id
 	 * set arrive here.
 	 */
 	public function create(Model $model, $fields = null, $values = null) {
 		$data = array_combine($fields, $values);
-		$data['apiKey'] = $this->config['apiKey'];
-		$json = $this->Http->post('http://example.com/api/set.json', $data);
-		$res = json_decode($json, true);
-		if (is_null($res)) {
-			$error = json_last_error();
-			throw new CakeException($error);
+		$create_function = "__{$model->alias}_create";
+		if (is_callable(array($this, $create_function))) {
+			return call_user_func(array($this, $create_function), $model, $fields, $values);
 		}
-		return true;
+		$this->__error("RSCSource::$create_function not defined.");
+	}
+	
+	
+	
+	private function __RSCFile_read(Model $model, $queryData = array(), $recursive = null) {
+		if (!isset($queryData['container'])) {
+			$this->__error('container not defined in find condition.');
+		}
+		//TODO
+	}
+	
+	private function __RSCDomain_read(Model $model, $queryData = array(), $recursive = null) {
+		if (!$this->connected) {
+			$this->connect();
+		}
+		$dns = $this->connection->DNS();
+		$filter = null;
+		if (!empty($queryData['conditions'])) {
+			$filter = $queryData['conditions'];
+		}
+		$dlist = $dns->DomainList($filter);
+		while ($domain = $dlist->Next()) {
+			$rsc_domain = array();
+			if (!empty($queryData['records'])) {
+				$rlist = $domain->RecordList();
+				while ($record = $rlist->Next()) {
+					$rsc_domain['RSCRecord'][] = array(
+						'name' => $record->Name(),
+						'id' => $record->id,
+						'type' => $record->type,
+						'data' => $record->data,
+						'ttl' => $record->ttl,
+						'created' => $record->created,
+						'updated' => $record->updated
+					);
+				}
+			}
+			$rsc_domain[$model->alias] = array(
+				'name' => $domain->Name(),
+				'id' => $domain->id,
+				'ttl' => $domain->ttl,
+				'created' => $domain->created,
+			);
+			$retval[] = $rsc_domain;
+		}
+		return $retval;
 	}
 
 	/**
@@ -206,5 +214,8 @@ class RSCSource extends DataSource {
 		return true;
 	}
 
+	private function __error($message) {
+		throw new RSCSourceException($message);
+	}
 
 }

@@ -106,6 +106,7 @@ class RSCFileCase extends CakeTestCase {
 	public function startTest($method){
 		//$this->RSCFile = $this->getMockForModel('RSC.RSCFile', array(), array($this->config));
 		$this->RSCFile = ClassRegistry::init('RSC.RSCFile');
+		$this->RSCFile->useDbConfig = 'rsc';
 		$this->setupTestFiles();
 		return parent::startTest($method);
 	}
