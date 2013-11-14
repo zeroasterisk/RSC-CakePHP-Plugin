@@ -131,7 +131,20 @@ deletedBool = $this->RSCFile->delete('filename.png');
 deletedBool = $this->RSCFile->delete('funky/path/here/filename.png');
 ```
 
-DNS
+Do your own API work
+--------------------------
+
+Once you get connected up to a container, the rest of the API setup is very
+simple... so you can easily use this model to get you to the `$container`
+object and then you can do your own API implementation/work from there.
+
+```
+$Container = $this->RSCFile->container('my-cool-container');
+$newDataObject = $Container->DataObject();
+$newDataObject->Create($params, $sourcefile);
+```
+
+RackSpace Cloud DNS Domain and Records
 -------------------------
 
 Find Domain
@@ -189,17 +202,4 @@ Delete Record
 
 ```
 $this->RSCRecord->delete('pop.nick-is-awesome.com', 'nick-is-awesome.com');
-```
-
-Do your own API work
---------------------------
-
-Once you get connected up to a container, the rest of the API setup is very
-simple... so you can easily use this model to get you to the `$container`
-object and then you can do your own API implementation/work from there.
-
-```
-$Container = $this->RSCFile->container('my-cool-container');
-$newDataObject = $Container->DataObject();
-$newDataObject->Create($params, $sourcefile);
 ```

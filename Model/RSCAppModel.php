@@ -47,12 +47,19 @@ class RSCAppModel extends AppModel {
 		return !!$this->RackSpace;
 	}
 
+	/**
+	* Throws custom RSCException error
+	* @param string message
+	* @throws RSCExcpetion error
+	*/
 	protected function _error($message) {
 		throw new RSCException($message);
 	}
 	
 	/**
 	* Strip out the model alias out of the conditions array.
+	* @param array conditions
+	* @return array conditions
 	*/
 	protected function _stripOutModelAliasInConditions($conditions = array()) {
 		if (empty($conditions) || empty($this->alias)) {

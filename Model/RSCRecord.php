@@ -43,7 +43,7 @@ class RSCRecord extends RSCAppModel {
 	public $DNS = null;
 	
 	/**
-	* 
+	* Build the DNS object for me from RackSpace object.
 	*/
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
@@ -61,7 +61,7 @@ class RSCRecord extends RSCAppModel {
 	* Examples
 		$this->RSCRecord->find('all', array(
 			'conditions' => array(
-				'name' => 'example.com'
+				'zone' => 'example.com'
 			),
 		));
 	*/
@@ -115,7 +115,7 @@ class RSCRecord extends RSCAppModel {
 		}
 		/** This doesn't work because conditions don't work.  Must traverse the whole record list for now.
 		return !!$this->find('first', array(
-			'conditions' => array('name' => $zone)
+			'conditions' => array('zone' => $zone, 'name' => $name)
 		));*/
 		
 		$records = $this->find('all', array('conditions' => array('zone' => $zone)));
