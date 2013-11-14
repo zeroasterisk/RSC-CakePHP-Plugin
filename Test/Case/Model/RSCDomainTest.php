@@ -63,7 +63,8 @@ class RSCDomainCase extends CakeTestCase {
 		//Test create.
 		$data = array(
 			'name' => 'nick-is-awesome.com',
-			'emailAddress' => 'nbaker@healthyhearing.com'
+			'emailAddress' => 'nbaker@healthyhearing.com',
+			'ttl' => 3600
 		);
 		$result = $this->RSCDomain->save($data);
 		$this->assertEqual('nick-is-awesome.com', $result['RSCDomain']['name']);
@@ -72,7 +73,8 @@ class RSCDomainCase extends CakeTestCase {
 		//Test update
 		$data = array(
 			'name' => 'nick-is-awesome.com',
-			'emailAddress' => 'nick.baker@alliedhealthmedia.com'
+			'emailAddress' => 'nick.baker@alliedhealthmedia.com',
+			'ttl' => 3600
 		);
 		$result = $this->RSCDomain->save($data);
 		$this->assertEqual('nick-is-awesome.com', $result['RSCDomain']['name']);

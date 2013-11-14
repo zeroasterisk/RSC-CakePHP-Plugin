@@ -15,6 +15,7 @@ class RSCDomain extends RSCAppModel {
 		),
 		'ttl' => array(
 			'rule' => 'notempty',
+			'allowEmpty' => false
 		),
 		'emailAddress' => array(
 			'rule' => 'email',
@@ -136,7 +137,6 @@ class RSCDomain extends RSCAppModel {
 		if ($Domain) {
 			return array(
 				$this->alias => array(
-					'id' => $Domain->id,
 					'name' => $Domain->Name(),
 					'ttl' => $Domain->ttl,
 					'created' => $Domain->created,
