@@ -131,6 +131,66 @@ deletedBool = $this->RSCFile->delete('filename.png');
 deletedBool = $this->RSCFile->delete('funky/path/here/filename.png');
 ```
 
+DNS
+-------------------------
+
+Find Domain
+
+```
+$this->RSCDomain->find('first', array('conditions' => array('name' => 'example.com'));
+//Find with records
+$this->RSCDomain->find('first', array(
+  'conditions' => array('name' => 'example.com'), 
+  'records' => true
+));
+```
+
+Create and/or Update Domain
+
+```
+$this->RSCDomain->save(array(
+  'name' => 'nick-is-awesome.com', 
+  'emailAddress' => 'nick@example.com', 
+  'ttl' => 3600
+));
+```
+
+Delete Domain
+
+```
+$this->RSCDomain->delete('nick-is-awesome.com');
+```
+
+Records CRUD: require a 'zone' (aka domain name) when interacting with them. You pass this into the conditions
+
+Find Record
+
+```
+$this->RSCRecord->find('all', array(
+  'conditions' => array(
+    'zone' => 'example.com'
+  )
+));
+```
+
+Create and/or Update Record
+
+```
+$this->RSCRecord->save(array(
+  'zone' => 'nick-is-awesome.com',
+  'name' => 'pop.nick-is-awesome.com',
+  'type' => 'CNAME',
+  'data' => 'pop.gmail.com',
+  'ttl' => '3600',
+));
+```
+
+Delete Record
+
+```
+$this->RSCRecord->delete('pop.nick-is-awesome.com', 'nick-is-awesome.com');
+```
+
 Do your own API work
 --------------------------
 
