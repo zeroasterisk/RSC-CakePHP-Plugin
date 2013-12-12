@@ -36,28 +36,28 @@ class RSCRecord extends RSCAppModel {
 			'rule' => 'notempty',
 		),
 	);
-	
+
 	/**
 	* Placeholder for DNS
 	*/
 	public $DNS = null;
-	
+
 	/**
 	* Build the DNS object for me from RackSpace object.
 	*/
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 		if ($this->connect()) {
-			$this->DNS = $this->RackSpace->DNS();
+			$this->DNS = $this->RackSpace->dnsService();
 		}
 	}
-	
+
 	/**
 	* Find function
 	* @param string type
 	* @param array options
 	* @return array result
-	* 
+	*
 	* Examples
 		$this->RSCRecord->find('all', array(
 			'conditions' => array(
@@ -78,7 +78,7 @@ class RSCRecord extends RSCAppModel {
 		}
 		$Domain = $this->__getDomainObjectByZone($filter['zone']);
 		unset($filter['zone']);
-		
+
 		$retval = array();
 		$records = $Domain->RecordList($filter);
 		while ($record = $records->Next()) {
@@ -100,7 +100,7 @@ class RSCRecord extends RSCAppModel {
 		}
 		return $retval;
 	}
-	
+
 	/**
 	* Checks to see if a name recordExists
 	* @param string name
@@ -117,7 +117,7 @@ class RSCRecord extends RSCAppModel {
 		return !!$this->find('first', array(
 			'conditions' => array('zone' => $zone, 'name' => $name)
 		));*/
-		
+
 		$records = $this->find('all', array('conditions' => array('zone' => $zone)));
 		foreach ($records as $record) {
 			if ($record[$this->alias]['name'] === $name) {
@@ -126,7 +126,7 @@ class RSCRecord extends RSCAppModel {
 		}
 		return false;
 	}
-	
+
 	/**
 	* Find record ID by name and zone
 	* @param string name
@@ -145,7 +145,7 @@ class RSCRecord extends RSCAppModel {
 		}
 		return false;
 	}
-	
+
 	/**
 	* Saves and updates a domain
 	* @param array of data
@@ -159,6 +159,7 @@ class RSCRecord extends RSCAppModel {
 		}
 		$this->set($data);
 		if ($validate && !$this->validates()) {
+			die('z');
 			return false;
 		}
 		if (isset($data[$this->alias])) {
@@ -189,7 +190,7 @@ class RSCRecord extends RSCAppModel {
 		}
 		return false;
 	}
-	
+
 	/**
 	* Delete the Domain
 	* @param string name
@@ -213,7 +214,7 @@ class RSCRecord extends RSCAppModel {
 		}
 		return false;
 	}
-	
+
 	/**
 	* Gives me the Domain object return because it's useful.
 	* @param string zone
@@ -223,13 +224,13 @@ class RSCRecord extends RSCAppModel {
 		if (!$this->DNS) {
 			$this->_erorr('Unable to connect to DNS.');
 		}
-		$DomainList = $this->DNS->DomainList(array('name' => $zone));
-		if ($DomainList->Size() == 0) {
+		$DomainList = $this->DNS->domainList(array('name' => $zone));
+		if ($DomainList->count() == 0) {
 			$this->_error("$zone does not exist.");
 		}
-		return $DomainList->Next();
+		return $DomainList->next();
 	}
-	
+
 	/**
 	* Gives me the Record object return becasue it's useful
 	* @param string name

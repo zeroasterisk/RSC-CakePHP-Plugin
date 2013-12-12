@@ -8,7 +8,9 @@ class RSCSourceException extends CakeException {}
  * @link https://github.com/zeroasterisk/RSC-CakePHP-Plugin
  */
 App::uses('DataSource', 'Model/Datasource');
-App::import('Vendor', 'RSC.php-opencloud/lib/php-opencloud');
+App::import('Vendor', 'RSC.OpenCloud', array('file' => 'opencloud-composered/vendor/autoload.php'));
+#require_once dirname(dirname(__DIR__)) . DS . 'Vendor' . DS . 'opencloud-composered' . DS . 'vendor' . DS . 'autoload.php';
+use OpenCloud\Rackspace;
 class RSCSource extends DataSource {
 
 	/**
@@ -68,7 +70,7 @@ class RSCSource extends DataSource {
 			return $this->connection;
 		}
 		// initialize API
-		$authurl = (!empty($this->config['country']) && $this->config['country'] == 'UK' ? RACKSPACE_UK : RACKSPACE_US);
+		$authurl = (!empty($this->config['country']) && $this->config['country'] == 'UK' ? Rackspace::UK_IDENTITY_ENDPOINT : Rackspace::US_IDENTITY_ENDPOINT);
 		$auth = array(
 			'username' => $this->config['username'],
 			'apiKey' => $this->config['api_key'],
@@ -118,7 +120,7 @@ class RSCSource extends DataSource {
 	public function calculate(Model $model, $func, $params = array()) {
 		return 'COUNT';
 	}
-	
+
 	/**
 	* Strip out the model alias out of the conditions array.
 	*/

@@ -22,28 +22,28 @@ class RSCDomain extends RSCAppModel {
 			'allowEmpty' => true
 		),
 	);
-	
+
 	/**
 	* Placeholder for DNS
 	*/
 	public $DNS = null;
-	
+
 	/**
 	* Build the DNS from RackSpace Object
 	*/
 	public function __construct($id = false, $table = null, $ds = null) {
 		parent::__construct($id, $table, $ds);
 		if ($this->connect()) {
-			$this->DNS = $this->RackSpace->DNS();
+			$this->DNS = $this->RackSpace->dnsService();
 		}
 	}
-	
+
 	/**
 	* Find function
 	* @param string type
 	* @param array options
 	* @return array result
-	* 
+	*
 	* Examples
 		$this->RSCDomain->find('all', array(
 			'conditions' => array(
@@ -92,7 +92,7 @@ class RSCDomain extends RSCAppModel {
 		}
 		return $retval;
 	}
-	
+
 	/**
 	* Checks to see if a name exists
 	* @param string name
@@ -109,7 +109,7 @@ class RSCDomain extends RSCAppModel {
 			'conditions' => array('name' => $name)
 		));
 	}
-	
+
 	/**
 	* Saves and updates a domain
 	* @param array of data
@@ -146,7 +146,7 @@ class RSCDomain extends RSCAppModel {
 		}
 		return false;
 	}
-	
+
 	/**
 	* Delete the Domain
 	* @param string name
@@ -166,7 +166,7 @@ class RSCDomain extends RSCAppModel {
 		}
 		return false;
 	}
-	
+
 	/**
 	* Gives me the Domain object return because it's useful.
 	* @param string name
