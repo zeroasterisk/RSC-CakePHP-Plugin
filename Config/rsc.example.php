@@ -13,7 +13,7 @@ $config = array(
 		'files' => array(
 			'defaults' => array(
 				// CORS header (WIP)
-				'Access-Control-Allow-Origin' => '*',
+				'extra_headers' => array('Access-Control-Allow-Origin' => '*'),
 			)
 		)
 		// RSC DNS
