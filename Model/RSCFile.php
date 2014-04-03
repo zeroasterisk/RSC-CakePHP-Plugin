@@ -222,7 +222,7 @@ class RSCFile extends RSCAppModel {
 	 * @param array $params collection of new metadata for file
 	 * @param mixed $container string or object (or null = get last used container)
 	 */
-	public function update($filename, $params, $container = null) {
+	public function updateFileMetadata($filename, $params, $container = null) {
 		if (empty($filename)) {
 			return false;
 		}

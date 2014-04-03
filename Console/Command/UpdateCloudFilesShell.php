@@ -24,7 +24,7 @@ class UpdateCloudFilesShell extends Shell {
 		$this->RSCFile->useDbConfig = 'rsc';
 
 		$files_changed = $this->changeContentDisposition($this->containerName, 'mp3', 'attachment');
-		
+
 		var_dump($files_changed);
 		print "Updated " . count($files_changed) . " files.\n";
 
@@ -36,8 +36,8 @@ class UpdateCloudFilesShell extends Shell {
 		$updated_files = array();
 		foreach ($files as $file) {
 			if (strpos($file['type'], $file_type_to_change) !== false) {
-				$params = array('extra_headers' => array('Content-Disposition' => "{$new_disposition}; filename={$file['name']}"));
-				$this->RSCFile->update($file['name'], $params);
+				$params = array('extra_headers' => array('Content-Disposition' => "{$new_disposition}; filename=\"{$file['name']}\""));
+				$this->RSCFile->updateFileMetadata($file['name'], $params);
 				$updated_files[] = $file['name'];
 			}
 		}
