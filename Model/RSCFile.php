@@ -202,7 +202,7 @@ class RSCFile extends RSCAppModel {
 	 *
 	 * @param string $filename or $prefix
 	 *               if you don't pass $filename we try to use $this->id
-	 * @param mixed $container string or object (or null = get lastused container)
+	 * @param mixed $container string or object (or null = get last used container)
 	 * @return object DataObject
 	 */
 	public function _read($fields = null, $filename = null, $container = null) {
@@ -216,11 +216,26 @@ class RSCFile extends RSCAppModel {
 	}
 
 	/**
-	 * An API consistant overwrite of the Model->delete() method
+	 * Update a file 
+	 * 
+	 * @param string $filename
+	 * @param array $params collection of new metadata for file
+	 * @param mixed $container string or object (or null = get last used container)
+	 */
+	public function updateFileMetadata($filename, $params, $container = null) {
+		if (empty($filename)) {
+			return false;
+		}
+		$object = $this->container($container)->DataObject($filename);
+		$object->UpdateMetadata($params);
+	}
+
+	/**
+	 * An API consistent overwrite of the Model->delete() method
 	 *
 	 * @param string $filename or $prefix
 	 *               if you don't pass $filename we try to use $this->id
-	 * @param mixed $container string or object (or null = get lastused container)
+	 * @param mixed $container string or object (or null = get last used container)
 	 * @return object DataObject
 	 */
 	public function delete($filename = null, $container = null) {
@@ -249,8 +264,8 @@ class RSCFile extends RSCAppModel {
 	 * a quick and simple search/find for a filename or prefix
 	 *
 	 * @param string $filename or $prefix
-	 * @param mixed $container string or object (or null = get lastused container)
-	 * @return array $files (details, each node should have name, size, type)
+	 * @param mixed $container string or object (or null = get last used container)
+	 * @return array $files names of files
 	 */
 	public function findFiles($filename, $container = null) {
 		$list = $this->container($container)->ObjectList(array('prefix' => $filename));
@@ -265,7 +280,7 @@ class RSCFile extends RSCAppModel {
 	 * a quick and simple search/find for a filename or prefix
 	 *
 	 * @param string $filename or $prefix
-	 * @param mixed $container string or object (or null = get lastused container)
+	 * @param mixed $container string or object (or null = get last used container)
 	 * @return array $files (details, each node should have name, size, type)
 	 */
 	public function findFilesWithDetails($filename, $container = null) {
