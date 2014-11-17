@@ -281,7 +281,7 @@ class RSCFile extends RSCAppModel {
 	 *
 	 * @param string $filename or $prefix
 	 * @param mixed $container string or object (or null = get last used container)
-	 * @return array $files (details, each node should have name, size, type)
+	 * @return array $files (details, each node should have name, size, type, public_url)
 	 */
 	public function findFilesWithDetails($filename, $container = null) {
 		$list = $this->container($container)->ObjectList(array('prefix' => $filename));
@@ -291,6 +291,7 @@ class RSCFile extends RSCAppModel {
 				'name' => $o->name,
 				'size' => $o->bytes,
 				'type' => $o->content_type,
+				'public_url' => $o->PublicURL(),
 			);
 		}
 		return $files;
@@ -324,13 +325,12 @@ class RSCFile extends RSCAppModel {
 	 * @return array $details
 	 */
 	public function getFileDetails($filename, $container = null) {
-		$o = $this->read(null, $filename, $container);
+		$o = $this->_read(null, $filename, $container);
 		return array(
 			'name' => $o->name,
 			'size' => $o->bytes,
-			'type' => $o->type,
-			'cdnurl' => $object->CDNUrl(),
-			'publicurl' => $object->PublicURL(),
+			'cdnurl' => $o->CDNUrl(),
+			'publicurl' => $o->PublicURL(),
 			'hash' => $o->hash,
 			'last_modified' => $o->last_modified,
 			'content_type' => $o->content_type,
