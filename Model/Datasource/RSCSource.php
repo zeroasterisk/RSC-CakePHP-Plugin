@@ -34,6 +34,11 @@ class RSCSource extends DataSource {
 	 * Create our HttpSocket and handle any config tweaks.
 	 */
 	public function __construct($config) {
+		if (!defined('RACKSPACE_US')) {
+			// difficult finding these files on some systems
+			require_once(APP . 'Plugin/RSC/Vendor/php-opencloud/lib/php-opencloud.php');
+			require_once(APP . 'Plugin/RSC/Vendor/php-opencloud/lib/OpenCloud/Globals.php');
+		}
 		$config = $this->assignConfig($config);
 		parent::__construct($config);
 	}
