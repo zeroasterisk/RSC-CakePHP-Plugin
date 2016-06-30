@@ -248,7 +248,7 @@ class RSCFile extends RSCAppModel {
 		if (is_object($filename)) {
 			$object = $filename;
 		} else {
-			if (!$this->exists($filename)) {
+			if (!$this->exists($filename, $container)) {
 				return false;
 			}
 			$object = $this->container($container)->DataObject($filename);
